@@ -25,6 +25,21 @@ export default async function FormsPage() {
     },
   })
 
+  // 獲取所有有報價記錄的廠商（去重）
+  const formsWithQuotations = await prisma.form.findMany({
+    where: {
+      quotations: {
+        some: {},
+      },
+    },
+    select: {
+      vendorName: true,
+    },
+    distinct: ['vendorName'],
+  })
+
+  const vendorsWithQuotations = formsWithQuotations.map(f => f.vendorName)
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header user={session.user} />
@@ -47,7 +62,7 @@ export default async function FormsPage() {
         </div>
 
         <div className="mt-8">
-          <FormsList forms={forms} />
+          <FormsList forms={forms} vendorsWithQuotations={vendorsWithQuotations} />
         </div>
       </main>
     </div>
