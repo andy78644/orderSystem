@@ -252,13 +252,13 @@ export default function QuotePage({ params }: Props) {
                         required
                         value={prices[item.id] || ''}
                         onChange={(e) => handlePriceChange(item.id, e.target.value)}
-                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black placeholder:text-gray-600 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
                         placeholder="請輸入單價"
                       />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700">小計</label>
-                      <div className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-700 sm:text-sm">
+                      <div className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-700 sm:text-base">
                         NT$ {calculateSubtotal(item.id).toLocaleString('zh-TW', { minimumFractionDigits: 2 })}
                       </div>
                     </div>

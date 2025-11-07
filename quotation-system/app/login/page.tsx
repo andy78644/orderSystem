@@ -74,7 +74,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                className="relative block w-full appearance-none rounded-none rounded-t-md border border-gray-300 px-3 py-2 text-black placeholder:text-gray-600 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
                 placeholder="Email 地址"
               />
             </div>
@@ -90,7 +90,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+                className="relative block w-full appearance-none rounded-none rounded-b-md border border-gray-300 px-3 py-2 text-black placeholder:text-gray-600 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
                 placeholder="密碼"
               />
             </div>
