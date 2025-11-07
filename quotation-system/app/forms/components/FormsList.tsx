@@ -16,13 +16,13 @@ type Form = {
 
 type FormsListProps = {
   forms: Form[]
+  vendorsWithQuotations: string[]
 }
 
-export default function FormsList({ forms }: FormsListProps) {
+export default function FormsList({ forms, vendorsWithQuotations }: FormsListProps) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [selectedForms, setSelectedForms] = useState<string[]>([])
-  const [compareMode, setCompareMode] = useState(false)
+  const [selectedVendor, setSelectedVendor] = useState<string>('')
 
   const handleDelete = async (id: string) => {
     if (!confirm('確定要刪除此表單？此操作無法復原，所有相關報價記錄也會被刪除。')) {
@@ -74,22 +74,8 @@ export default function FormsList({ forms }: FormsListProps) {
     }
   }
 
-  const handleDuplicate = async (id: string) => {
-    try {
-      const res = await fetch(`/api/forms/${id}/duplicate`, {
-        method: 'POST',
-      })
-
-      if (!res.ok) {
-        throw new Error('複製失敗')
-      }
-
-      const data = await res.json()
-      router.push(`/forms/${data.form.id}/edit`)
-    } catch (error) {
-      console.error('Duplicate error:', error)
-      alert('複製失敗，請稍後再試')
-    }
+  const handleDuplicate = (id: string) => {
+    router.push(`/forms/new?copy=${id}`)
   }
 
   const getPublicUrl = (formId: string) => {
@@ -102,37 +88,25 @@ export default function FormsList({ forms }: FormsListProps) {
     alert('連結已複製到剪貼簿')
   }
 
-  const handleSelectForm = (formId: string) => {
-    setSelectedForms(prev =>
-      prev.includes(formId)
-        ? prev.filter(id => id !== formId)
-        : [...prev, formId]
-    )
-  }
-
-  const handleCompare = () => {
-    if (selectedForms.length < 2) {
-      alert('請至少選擇 2 張表單進行比較')
+  const handleVendorCompare = () => {
+    if (!selectedVendor) {
+      alert('請選擇要比較的廠商')
       return
     }
 
-    // 檢查是否為同一廠商
-    const selectedFormsData = forms.filter(f => selectedForms.includes(f.id))
-    const vendors = new Set(selectedFormsData.map(f => f.vendorName))
+    // 找出該廠商所有有報價的表單
+    const vendorForms = forms.filter(
+      f => f.vendorName === selectedVendor && f.quotations.length > 0
+    )
 
-    if (vendors.size > 1) {
-      alert('目前只支援比較同一廠商的報價。請選擇同一廠商的表單。')
+    if (vendorForms.length < 2) {
+      alert('此廠商的報價記錄不足 2 張，無法進行比較')
       return
     }
 
     // 導向比較頁面
-    const formIds = selectedForms.join(',')
+    const formIds = vendorForms.map(f => f.id).join(',')
     router.push(`/forms/compare?ids=${formIds}`)
-  }
-
-  const toggleCompareMode = () => {
-    setCompareMode(!compareMode)
-    setSelectedForms([])
   }
 
   if (forms.length === 0) {
@@ -168,34 +142,36 @@ export default function FormsList({ forms }: FormsListProps) {
 
   return (
     <div className="space-y-4">
-      {/* 比較模式工具列 */}
-      <div className="flex items-center justify-between rounded-lg bg-white p-4 shadow">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={toggleCompareMode}
-            className={`rounded-md px-4 py-2 text-sm font-medium ${
-              compareMode
-                ? 'bg-blue-600 text-white hover:bg-blue-700'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            {compareMode ? '取消比較' : '比較報價'}
-          </button>
-          {compareMode && (
-            <span className="text-sm text-gray-600">
-              已選擇 {selectedForms.length} 張表單
-            </span>
-          )}
+      {/* 廠商比較工具列 */}
+      {vendorsWithQuotations.length > 0 && (
+        <div className="rounded-lg bg-white p-4 shadow">
+          <div className="flex items-center gap-4">
+            <label htmlFor="vendor-select" className="text-sm font-medium text-gray-700">
+              比較廠商報價：
+            </label>
+            <select
+              id="vendor-select"
+              value={selectedVendor}
+              onChange={(e) => setSelectedVendor(e.target.value)}
+              className="block w-64 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            >
+              <option value="">選擇廠商...</option>
+              {vendorsWithQuotations.map(vendor => (
+                <option key={vendor} value={vendor}>
+                  {vendor}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={handleVendorCompare}
+              disabled={!selectedVendor}
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              查看比較
+            </button>
+          </div>
         </div>
-        {compareMode && selectedForms.length >= 2 && (
-          <button
-            onClick={handleCompare}
-            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
-          >
-            開始比較 ({selectedForms.length} 張表單)
-          </button>
-        )}
-      </div>
+      )}
 
       {/* 表單列表 */}
       <div className="overflow-hidden bg-white shadow sm:rounded-md">
@@ -204,18 +180,6 @@ export default function FormsList({ forms }: FormsListProps) {
             <li key={form.id}>
               <div className="px-4 py-4 sm:px-6">
                 <div className="flex items-start gap-4">
-                  {/* 多選框 */}
-                  {compareMode && (
-                    <div className="flex items-center pt-1">
-                      <input
-                        type="checkbox"
-                        checked={selectedForms.includes(form.id)}
-                        onChange={() => handleSelectForm(form.id)}
-                        className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                    </div>
-                  )}
-
                   <div className="flex-1">
                   <h3 className="text-lg font-medium text-gray-900">{form.title}</h3>
                   <div className="mt-2 grid grid-cols-2 gap-4 text-sm text-gray-600">
