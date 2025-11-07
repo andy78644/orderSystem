@@ -21,6 +21,8 @@ type FormsListProps = {
 export default function FormsList({ forms }: FormsListProps) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [selectedForms, setSelectedForms] = useState<string[]>([])
+  const [compareMode, setCompareMode] = useState(false)
 
   const handleDelete = async (id: string) => {
     if (!confirm('確定要刪除此表單？此操作無法復原，所有相關報價記錄也會被刪除。')) {
@@ -100,6 +102,39 @@ export default function FormsList({ forms }: FormsListProps) {
     alert('連結已複製到剪貼簿')
   }
 
+  const handleSelectForm = (formId: string) => {
+    setSelectedForms(prev =>
+      prev.includes(formId)
+        ? prev.filter(id => id !== formId)
+        : [...prev, formId]
+    )
+  }
+
+  const handleCompare = () => {
+    if (selectedForms.length < 2) {
+      alert('請至少選擇 2 張表單進行比較')
+      return
+    }
+
+    // 檢查是否為同一廠商
+    const selectedFormsData = forms.filter(f => selectedForms.includes(f.id))
+    const vendors = new Set(selectedFormsData.map(f => f.vendorName))
+
+    if (vendors.size > 1) {
+      alert('目前只支援比較同一廠商的報價。請選擇同一廠商的表單。')
+      return
+    }
+
+    // 導向比較頁面
+    const formIds = selectedForms.join(',')
+    router.push(`/forms/compare?ids=${formIds}`)
+  }
+
+  const toggleCompareMode = () => {
+    setCompareMode(!compareMode)
+    setSelectedForms([])
+  }
+
   if (forms.length === 0) {
     return (
       <div className="text-center py-12">
@@ -132,13 +167,56 @@ export default function FormsList({ forms }: FormsListProps) {
   }
 
   return (
-    <div className="overflow-hidden bg-white shadow sm:rounded-md">
-      <ul role="list" className="divide-y divide-gray-200">
-        {forms.map((form) => (
-          <li key={form.id}>
-            <div className="px-4 py-4 sm:px-6">
-              <div className="flex items-center justify-between">
-                <div className="flex-1">
+    <div className="space-y-4">
+      {/* 比較模式工具列 */}
+      <div className="flex items-center justify-between rounded-lg bg-white p-4 shadow">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={toggleCompareMode}
+            className={`rounded-md px-4 py-2 text-sm font-medium ${
+              compareMode
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            {compareMode ? '取消比較' : '比較報價'}
+          </button>
+          {compareMode && (
+            <span className="text-sm text-gray-600">
+              已選擇 {selectedForms.length} 張表單
+            </span>
+          )}
+        </div>
+        {compareMode && selectedForms.length >= 2 && (
+          <button
+            onClick={handleCompare}
+            className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+          >
+            開始比較 ({selectedForms.length} 張表單)
+          </button>
+        )}
+      </div>
+
+      {/* 表單列表 */}
+      <div className="overflow-hidden bg-white shadow sm:rounded-md">
+        <ul role="list" className="divide-y divide-gray-200">
+          {forms.map((form) => (
+            <li key={form.id}>
+              <div className="px-4 py-4 sm:px-6">
+                <div className="flex items-start gap-4">
+                  {/* 多選框 */}
+                  {compareMode && (
+                    <div className="flex items-center pt-1">
+                      <input
+                        type="checkbox"
+                        checked={selectedForms.includes(form.id)}
+                        onChange={() => handleSelectForm(form.id)}
+                        className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex-1">
                   <h3 className="text-lg font-medium text-gray-900">{form.title}</h3>
                   <div className="mt-2 grid grid-cols-2 gap-4 text-sm text-gray-600">
                     <div>
@@ -215,11 +293,13 @@ export default function FormsList({ forms }: FormsListProps) {
                 >
                   {deletingId === form.id ? '刪除中...' : '刪除'}
                 </button>
+                </div>
               </div>
             </div>
           </li>
         ))}
       </ul>
+    </div>
     </div>
   )
 }
