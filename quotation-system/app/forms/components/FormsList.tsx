@@ -295,7 +295,6 @@ export default function FormsList({ forms }: FormsListProps) {
                 </button>
                 </div>
               </div>
-            </div>
           </li>
         ))}
       </ul>
