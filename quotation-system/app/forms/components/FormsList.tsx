@@ -16,13 +16,11 @@ type Form = {
 
 type FormsListProps = {
   forms: Form[]
-  vendorsWithQuotations: string[]
 }
 
-export default function FormsList({ forms, vendorsWithQuotations }: FormsListProps) {
+export default function FormsList({ forms }: FormsListProps) {
   const router = useRouter()
   const [deletingId, setDeletingId] = useState<string | null>(null)
-  const [selectedVendor, setSelectedVendor] = useState<string>('')
 
   const handleDelete = async (id: string) => {
     if (!confirm('確定要刪除此表單？此操作無法復原，所有相關報價記錄也會被刪除。')) {
@@ -88,27 +86,6 @@ export default function FormsList({ forms, vendorsWithQuotations }: FormsListPro
     alert('連結已複製到剪貼簿')
   }
 
-  const handleVendorCompare = () => {
-    if (!selectedVendor) {
-      alert('請選擇要比較的廠商')
-      return
-    }
-
-    // 找出該廠商所有有報價的表單
-    const vendorForms = forms.filter(
-      f => f.vendorName === selectedVendor && f.quotations.length > 0
-    )
-
-    if (vendorForms.length < 2) {
-      alert('此廠商的報價記錄不足 2 張，無法進行比較')
-      return
-    }
-
-    // 導向比較頁面
-    const formIds = vendorForms.map(f => f.id).join(',')
-    router.push(`/forms/compare?ids=${formIds}`)
-  }
-
   if (forms.length === 0) {
     return (
       <div className="text-center py-12">
@@ -141,48 +118,7 @@ export default function FormsList({ forms, vendorsWithQuotations }: FormsListPro
   }
 
   return (
-    <div className="space-y-4">
-      {/* 廠商比較工具列 */}
-      <div className="rounded-lg bg-white p-4 shadow">
-        <div className="flex items-center gap-4">
-          <label htmlFor="vendor-select" className="text-sm font-medium text-gray-700">
-            比較廠商報價：
-          </label>
-          <select
-            id="vendor-select"
-            value={selectedVendor}
-            onChange={(e) => setSelectedVendor(e.target.value)}
-            className="block w-64 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-black"
-            disabled={vendorsWithQuotations.length === 0}
-          >
-            <option value="">
-              {vendorsWithQuotations.length === 0
-                ? '暫無可比較的廠商報價'
-                : '選擇廠商...'}
-            </option>
-            {vendorsWithQuotations.map(vendor => (
-              <option key={vendor} value={vendor}>
-                {vendor}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={handleVendorCompare}
-            disabled={!selectedVendor}
-            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            查看比較
-          </button>
-        </div>
-        {vendorsWithQuotations.length === 0 && (
-          <p className="mt-2 text-sm text-gray-500">
-            💡 提示：當廠商提交報價後，您就可以在這裡選擇廠商查看其歷史報價比較
-          </p>
-        )}
-      </div>
-
-      {/* 表單列表 */}
-      <div className="overflow-hidden bg-white shadow sm:rounded-md">
+    <div className="overflow-hidden bg-white shadow sm:rounded-md">
         <ul role="list" className="divide-y divide-gray-200">
           {forms.map((form) => (
             <li key={form.id}>
@@ -270,7 +206,6 @@ export default function FormsList({ forms, vendorsWithQuotations }: FormsListPro
           </li>
         ))}
       </ul>
-    </div>
     </div>
   )
 }
