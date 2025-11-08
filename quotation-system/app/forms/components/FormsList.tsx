@@ -143,35 +143,43 @@ export default function FormsList({ forms, vendorsWithQuotations }: FormsListPro
   return (
     <div className="space-y-4">
       {/* 廠商比較工具列 */}
-      {vendorsWithQuotations.length > 0 && (
-        <div className="rounded-lg bg-white p-4 shadow">
-          <div className="flex items-center gap-4">
-            <label htmlFor="vendor-select" className="text-sm font-medium text-gray-700">
-              比較廠商報價：
-            </label>
-            <select
-              id="vendor-select"
-              value={selectedVendor}
-              onChange={(e) => setSelectedVendor(e.target.value)}
-              className="block w-64 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-            >
-              <option value="">選擇廠商...</option>
-              {vendorsWithQuotations.map(vendor => (
-                <option key={vendor} value={vendor}>
-                  {vendor}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={handleVendorCompare}
-              disabled={!selectedVendor}
-              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              查看比較
-            </button>
-          </div>
+      <div className="rounded-lg bg-white p-4 shadow">
+        <div className="flex items-center gap-4">
+          <label htmlFor="vendor-select" className="text-sm font-medium text-gray-700">
+            比較廠商報價：
+          </label>
+          <select
+            id="vendor-select"
+            value={selectedVendor}
+            onChange={(e) => setSelectedVendor(e.target.value)}
+            className="block w-64 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-black"
+            disabled={vendorsWithQuotations.length === 0}
+          >
+            <option value="">
+              {vendorsWithQuotations.length === 0
+                ? '暫無可比較的廠商報價'
+                : '選擇廠商...'}
+            </option>
+            {vendorsWithQuotations.map(vendor => (
+              <option key={vendor} value={vendor}>
+                {vendor}
+              </option>
+            ))}
+          </select>
+          <button
+            onClick={handleVendorCompare}
+            disabled={!selectedVendor}
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            查看比較
+          </button>
         </div>
-      )}
+        {vendorsWithQuotations.length === 0 && (
+          <p className="mt-2 text-sm text-gray-500">
+            💡 提示：當廠商提交報價後，您就可以在這裡選擇廠商查看其歷史報價比較
+          </p>
+        )}
+      </div>
 
       {/* 表單列表 */}
       <div className="overflow-hidden bg-white shadow sm:rounded-md">
