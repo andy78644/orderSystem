@@ -201,40 +201,60 @@ npm run lint             # 執行 ESLint
    - 確認無誤後點選「提交報價」
    - 若表單允許，可重新提交修改報價
 
-## 🚢 部署建議
+## 🚢 部署到生產環境
 
-### 資料庫
+### 📖 完整部署指南
 
-**開發環境**: SQLite (已設定)
+詳細的部署步驟請參閱 **[DEPLOYMENT.md](./DEPLOYMENT.md)**，包含：
+- ✅ Vercel 部署完整步驟
+- ✅ PostgreSQL 資料庫設定
+- ✅ 環境變數配置
+- ✅ 資料庫遷移執行
+- ✅ 常見問題解決方案
+- ✅ 部署檢查清單
 
-**生產環境**: 建議使用以下雲端 PostgreSQL 服務：
-- [Supabase](https://supabase.com/) (推薦)
-- [Neon](https://neon.tech/)
-- [Railway](https://railway.app/)
+### ⚡ 快速部署（Vercel）
 
-切換步驟：
-1. 修改 `prisma/schema.prisma`：
-   ```prisma
-   datasource db {
-     provider = "postgresql"
-     url      = env("DATABASE_URL")
-   }
-   ```
+1. **準備資料庫**
+   - 推薦使用 [Vercel Postgres](https://vercel.com/storage/postgres)
+   - 或其他服務：[Supabase](https://supabase.com/) / [Neon](https://neon.tech/)
 
-2. 更新 `.env` 中的 `DATABASE_URL`
+2. **部署到 Vercel**
+   - 前往 [Vercel Dashboard](https://vercel.com/dashboard)
+   - 匯入您的 GitHub 倉庫
+   - 選擇分支：`claude/quotation-system-prototype-011CUs1uvjdsRichmWxsVxcN`
+   - 設定 Root Directory: `quotation-system`
+   - 配置環境變數（參考 `.env.example`）
+   - 點擊部署
 
-3. 執行 migration：
+3. **初始化資料庫**
    ```bash
-   npx prisma migrate deploy
-   npm run db:seed
+   # 本地執行（連接到生產資料庫）
+   DATABASE_URL="your-production-db-url" npx prisma migrate deploy
+   DATABASE_URL="your-production-db-url" npx prisma db seed
    ```
 
-### 部署平台
+4. **測試部署**
+   - 訪問部署 URL
+   - 使用管理員帳號登入
+   - 建立測試表單
+   - 測試廠商報價功能
 
-推薦使用 [Vercel](https://vercel.com/)：
-1. 連接 GitHub repository
-2. 設定環境變數
-3. 自動部署
+### 🔧 生產環境配置
+
+**重要環境變數**：
+```env
+DATABASE_URL="postgresql://..."           # PostgreSQL 連接字串
+NEXTAUTH_SECRET="random-secret-key"       # 隨機生成的密鑰
+NEXTAUTH_URL="https://your-app.vercel.app" # 實際部署 URL
+ADMIN_EMAIL="your-email@example.com"      # 管理員 Email
+ADMIN_PASSWORD="secure-password"          # 強密碼
+```
+
+**⚠️ 安全提醒**：
+- 生產環境務必修改預設管理員密碼
+- 使用強隨機密鑰作為 `NEXTAUTH_SECRET`
+- 定期備份資料庫
 
 ## 🔄 從 Prototype 升級到完整產品
 
