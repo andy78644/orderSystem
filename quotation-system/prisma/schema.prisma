@@ -6,8 +6,11 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Vercel Postgres uses POSTGRES_PRISMA_URL and POSTGRES_URL_NON_POOLING
+  // Fallback to DATABASE_URL for other providers (Supabase, Neon, etc.)
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
 // 用戶表（簡化版，Phase 1 使用單一管理員）
