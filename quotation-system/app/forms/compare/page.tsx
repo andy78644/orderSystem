@@ -18,7 +18,7 @@ export default async function ComparePage({ searchParams }: Props) {
   const params = await searchParams
   const ids = params.ids?.split(',') || []
 
-  if (ids.length < 2) {
+  if (ids.length < 1) {
     redirect('/forms')
   }
 
