@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  // Vercel Postgres uses POSTGRES_PRISMA_URL and POSTGRES_URL_NON_POOLING
+  // Fallback to DATABASE_URL for other providers (Supabase, Neon, etc.)
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+// 用戶表（簡化版，Phase 1 使用單一管理員）
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  name         String
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  forms        Form[]
+
+  @@map("users")
+}
+
+// 表單主表
+model Form {
+  id                      String   @id @default(uuid())
+  title                   String
+  vendorName              String   @map("vendor_name")
+  vendorPhone             String   @map("vendor_phone")
+  vendorEmail             String   @map("vendor_email")
+  allowMultipleSubmissions Boolean @default(false) @map("allow_multiple_submissions")
+  status                  String   @default("open") // 'open' or 'closed'
+  createdById             String?  @map("created_by")
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @updatedAt @map("updated_at")
+
+  createdBy    User?          @relation(fields: [createdById], references: [id])
+  items        FormItem[]
+  quotations   Quotation[]
+
+  @@index([createdById])
+  @@map("forms")
+}
+
+// 表單商品項目
+model FormItem {
+  id            String   @id @default(uuid())
+  formId        String   @map("form_id")
+  productName   String   @map("product_name")
+  specification String?  // 規格描述
+  quantity      Float
+  unit          String
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  form              Form             @relation(fields: [formId], references: [id], onDelete: Cascade)
+  quotationItems    QuotationItem[]
+
+  @@index([formId])
+  @@map("form_items")
+}
+
+// 報價記錄（表頭）
+model Quotation {
+  id          String   @id @default(uuid())
+  formId      String   @map("form_id")
+  version     Int      @default(1) // 版本號
+  totalAmount Float?   @map("total_amount")
+  submittedAt DateTime @default(now()) @map("submitted_at")
+  ipAddress   String?  @map("ip_address")
+
+  form   Form             @relation(fields: [formId], references: [id], onDelete: Cascade)
+  items  QuotationItem[]
+
+  @@index([formId])
+  @@map("quotations")
+}
+
+// 報價明細（表身）
+model QuotationItem {
+  id          String   @id @default(uuid())
+  quotationId String   @map("quotation_id")
+  formItemId  String   @map("form_item_id")
+  unitPrice   Float    @map("unit_price")
+  quantity    Float
+  subtotal    Float
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  quotation Quotation @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  formItem  FormItem  @relation(fields: [formItemId], references: [id])
+
+  @@index([quotationId])
+  @@map("quotation_items")
+}

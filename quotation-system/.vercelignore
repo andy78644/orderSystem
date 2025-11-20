@@ -1,0 +1,19 @@
+# Vercel ignore file - 排除不需要部署的文件
+
+# 本地數據庫
+*.db
+*.db-journal
+prisma/*.db
+prisma/*.db-journal
+
+# 開發文件
+.env.local
+.env.development
+.vscode/
+.idea/
+
+# 測試文件
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
