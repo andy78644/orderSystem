@@ -134,7 +134,7 @@ export default function FormEditor({ initialData, mode }: FormEditorProps) {
               id="title"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
               placeholder="例如：2024-Q1 辦公用品採購"
             />
           </div>
@@ -148,7 +148,7 @@ export default function FormEditor({ initialData, mode }: FormEditorProps) {
               id="vendorName"
               value={formData.vendorName}
               onChange={(e) => setFormData({ ...formData, vendorName: e.target.value })}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
               placeholder="例如：ABC 文具公司"
             />
           </div>
@@ -162,7 +162,7 @@ export default function FormEditor({ initialData, mode }: FormEditorProps) {
               id="vendorPhone"
               value={formData.vendorPhone}
               onChange={(e) => setFormData({ ...formData, vendorPhone: e.target.value })}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
               placeholder="例如：02-1234-5678"
             />
           </div>
@@ -176,7 +176,7 @@ export default function FormEditor({ initialData, mode }: FormEditorProps) {
               id="vendorEmail"
               value={formData.vendorEmail}
               onChange={(e) => setFormData({ ...formData, vendorEmail: e.target.value })}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
               placeholder="例如：contact@example.com"
             />
           </div>
@@ -237,7 +237,7 @@ export default function FormEditor({ initialData, mode }: FormEditorProps) {
                     type="text"
                     value={item.productName}
                     onChange={(e) => updateItem(index, 'productName', e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
                     placeholder="例如：手套"
                   />
                 </div>
@@ -248,7 +248,7 @@ export default function FormEditor({ initialData, mode }: FormEditorProps) {
                     type="text"
                     value={item.specification}
                     onChange={(e) => updateItem(index, 'specification', e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
                     placeholder="例如：醫療用"
                   />
                 </div>
@@ -262,7 +262,7 @@ export default function FormEditor({ initialData, mode }: FormEditorProps) {
                     step="0.01"
                     value={item.quantity}
                     onChange={(e) => updateItem(index, 'quantity', e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
                     placeholder="例如：10"
                   />
                 </div>
@@ -275,7 +275,7 @@ export default function FormEditor({ initialData, mode }: FormEditorProps) {
                     type="text"
                     value={item.unit}
                     onChange={(e) => updateItem(index, 'unit', e.target.value)}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-base"
                     placeholder="例如：打、個、盒"
                   />
                 </div>
